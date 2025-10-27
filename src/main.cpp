@@ -45,7 +45,7 @@
   #define AP_MODE 4
   #define WDT_TIMEOUT 250  // Watchdog timer in seconds.
 
-  const int wakeupPin = 10;  // GPIO 7 for external wake-up
+  const int wakeupPin = 2;  // GPIO 7 for external wake-up
 
 
   const int PUBLISH_INTERVAL = 5000;  // 5 seconds
@@ -178,7 +178,7 @@
       mode = DEBUG;
     }
 
-    if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0){
+    if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_GPIO){
       mode = AP_MODE;
     }
 
@@ -192,7 +192,7 @@
       
       default : run_normal_mode(v_batt); break;
     }
-    esp_sleep_enable_ext0_wakeup(gpio_num_t(wakeupPin), LOW);
+    gpio_deep_sleep_wakeup_enable(gpio_num_t(wakeupPin), GPIO_INTR_LOW_LEVEL);
 
 
     Serial.println("mode: " + String(mode));
@@ -204,10 +204,10 @@
   }
 
   void loop() {
-    Serial.println("Entering Loop");
+    //Serial.println("Entering Loop");
     //esp_task_wdt_reset();
     //mqtt.loop();
-    Serial.println("Entering after mqtt loop");
+    //Serial.println("Entering after mqtt loop");
     if (millis() - lastPublishTime > PUBLISH_INTERVAL) {
       //sendToMQTT();
       lastPublishTime = millis();
